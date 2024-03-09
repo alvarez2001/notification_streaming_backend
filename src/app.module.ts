@@ -7,6 +7,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './authentication/application/guards/jwt-auth.guard';
+import { Oauth2credentialModule } from './oauth2credential/oauth2credential.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { JwtAuthGuard } from './authentication/application/guards/jwt-auth.guard
         }),
         UserModule,
         AuthenticationModule,
+        Oauth2credentialModule,
     ],
     controllers: [],
     providers: [

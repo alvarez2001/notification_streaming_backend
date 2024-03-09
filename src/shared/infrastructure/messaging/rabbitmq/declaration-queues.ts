@@ -5,4 +5,7 @@ export enum DeclarationQueues {
 
     'authentication_created' = 'authentication.created',
     'authentication_updated' = 'authentication.updated',
+
+    'oauth2credential_created' = 'oauth2credential.created',
+    'oauth2credential_updated' = 'oauth2credential.updated',
 }

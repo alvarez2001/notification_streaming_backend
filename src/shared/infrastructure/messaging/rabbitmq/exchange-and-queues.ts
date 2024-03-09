@@ -12,4 +12,8 @@ export const ExchangesAndQueues: {
         DeclarationQueues.authentication_created,
         DeclarationQueues.authentication_updated,
     ],
+    [DeclarationExchanges.oauth2credential_exchange]: [
+        DeclarationQueues.oauth2credential_created,
+        DeclarationQueues.oauth2credential_updated,
+    ],
 };

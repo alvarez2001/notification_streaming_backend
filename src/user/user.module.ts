@@ -11,6 +11,7 @@ import { USER_REPOSITORY_INTERFACE } from './domain/interfaces/userRepository.in
 import { UserSubscriber } from './application/subscriber/user.subscriber';
 import { UserUpdatedConsumer } from './application/consumers/userUpdated.consumer';
 import { UserUpdatedPublisher } from './application/publishers/userUpdated.publisher';
+import { Oauth2credential } from 'src/oauth2credential/domain/entity/oauth2credential.entity';
 
 @Module({
     controllers: [UserController],
