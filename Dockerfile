@@ -11,7 +11,7 @@ RUN npm install -g @nestjs/cli
 COPY package*.json ./
 
 # Instalar dependencias del proyecto
-RUN npm install
+# RUN npm install
 
 # Copiar el resto del código fuente
 COPY . .
