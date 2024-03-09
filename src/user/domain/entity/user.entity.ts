@@ -11,18 +11,6 @@ export class User {
     @PrimaryGeneratedColumn('increment')
     public id: number;
 
-    @Column({ name: 'name' })
-    public name: string;
-
-    @Column({ name: 'last_name' })
-    public lastName: string;
-
-    @Column({ name: 'nationality' })
-    public nationality: string;
-
-    @Column({ name: 'identification' })
-    public identification: string;
-
     @Column({ name: 'email' })
     public email: string;
 

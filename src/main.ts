@@ -9,8 +9,8 @@ async function bootstrap(): Promise<void> {
     app.enableCors();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     const config = new DocumentBuilder()
-        .setTitle('CURIA PMS')
-        .setDescription('API CURIA PMS')
+        .setTitle('STREAMING NOTIFICATION')
+        .setDescription('API STREAMING NOTIFICATION')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
