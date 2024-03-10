@@ -1,45 +1,52 @@
-# PROJECT MANAGEMENT SYSTEM
 
-## Initial Setup
+# WATOFIER
 
-To start working with this project, you should set up the development environment by following these steps:
 
-### Setting Up Environment Variables
+This project connects to a user's social media accounts (currently supporting Twitter) and sends notifications to the specified social accounts when a stream on Twitch begins. It streamlines the notification process for streamers, ensuring their audience is promptly informed about live sessions across different platforms.
 
-1. Copy the `.env.example` file included in this repository:
 
+## Configuration
+
+1. **Copy Environment Variables**:
+   - Start by making a copy of the `.env.example` file and rename it to `.env`.
+   - Open the `.env` file and fill in the necessary credentials and configurations. This step is crucial for setting up your database and other services.
+
+## Prerequisites
+
+Before you can run this project, make sure you have the following installed:
+- **Node.js**: Version 21
+- **NestJS**: Version 10.0.0
+- **Docker and Docker Compose**: For containerization and easy deployment.
+
+You can download Node.js from here: https://nodejs.org/.
+
+## Installation
+
+Follow these steps to install all dependencies for the project:
+
+1. Navigate to the project directory and run:
    ```bash
-   cp .env.example .env
+   npm install
    ```
 
-2. Edit the `.env` file with your own test credentials and settings. This file will contain all the necessary configurations for the project, including database credentials, ports, and any other required environment variables.
+## Running the Application
 
-   Be sure to review and, if necessary, change the database user passwords, users, and any other sensitive settings before proceeding.
+To run the application with Docker Compose, execute the following command:
 
-### Launching the Project with Docker
-
-Once the `.env` file is set up, you can bring up the project using Docker Compose. This step will build and raise all the necessary containers for the project:
 ```bash
 docker compose up --build -d
 ```
 
-This command will build the images if it's the first time the project is being brought up, or if there have been changes in the dependencies, and then it will start the containers in detached mode.
+This command will build the Docker images and run the containers in the background.
 
-### Bringing Down the Project with Docker
+## Accessing the API Documentation
 
-To stop and remove all the containers created by the `up` command, you can use:
+Once the application is running, you can access the Swagger documentation for the API at:
 
-```bash
-docker compose down
-```
+[http://your-domain:3000/swagger-documentation](http://your-domain:3000/swagger-documentation)
 
-This command stops and removes the containers, networks, and the default volume configuration associated with your Docker composition.
+Replace `your-domain` with the actual domain of your application or use `localhost` if you are running it locally.
 
-## API Documentation
+## Support
 
-To view the documentation of the APIs and test the available endpoints, visit the following URL after bringing up the project:
-
-[http://localhost:3000/swagger-documentation](http://localhost:3000/swagger-documentation)
-
-The Swagger documentation will provide you with an interactive interface to test the endpoints, view the expected parameters, and review the possible response codes.
-
+If you encounter any issues or have questions, please file an issue on the GitHub repository.
