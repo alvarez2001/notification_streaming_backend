@@ -15,6 +15,7 @@ const crypto = require('crypto');
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { TwitterHttpInterface } from '../domain/interfaces/twitter.http.interface';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class Oauth2credentialService {
@@ -105,7 +106,7 @@ export class Oauth2credentialService {
             twitter: `${this.configService.get('URL_APP')}/api/oauth2credentials/callback/twitter`,
         };
         const scopesOAuth = {
-            twitter: ['tweet.write', 'offline.access'],
+            twitter: ['tweet.write', 'offline.access', 'tweet.read', 'users.read'],
         };
         const platform = createOauth2credentialDto.platform;
 
@@ -165,13 +166,16 @@ export class Oauth2credentialService {
         const codeVerifier = JSON.parse(state).codeVerifier;
         const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
         const redirecUri = `${this.configService.get('URL_APP')}/api/oauth2credentials/callback/twitter`;
-        let oauth2Credential = await this.oauth2credentialRepository.findByUserIdAndPlatform(userId, 'twitter');
+        let oauth2Credential = await this.oauth2credentialRepository.findByUserIdAndPlatform(
+            userId,
+            'twitter',
+        );
 
-        if(!oauth2Credential) {
+        if (!oauth2Credential) {
             const dataOAuth2 = new Oauth2credential();
             dataOAuth2.authTimestamp = new Date();
             dataOAuth2.platform = 'twitter';
-            dataOAuth2.status = 'in_progress'
+            dataOAuth2.status = 'in_progress';
             dataOAuth2.userId = userId;
             oauth2Credential = await this.oauth2credentialRepository.create(dataOAuth2);
         }
@@ -203,19 +207,61 @@ export class Oauth2credentialService {
                     refreshToken: data.refresh_token,
                     scope: data.scope,
                     tokenExpiry: data.expires_in,
-                    dateExpiry: now
-                })
+                    dateExpiry: now,
+                });
             },
             error: async error => {
                 console.log(`error -> ${error}`);
 
                 await this.oauth2credentialRepository.update(oauth2Credential.id, {
-                    status: 'refused'
-                })
+                    status: 'refused',
+                });
             },
         });
 
         return;
+    }
+
+    async implementationTwitterOAuthRefreshToken(userId: number): Promise<string> {
+        const clientId = this.configService.get('TWITTER_CLIENT_ID');
+        const clientSecret = this.configService.get('TWITTER_CLIENT_SECRET');
+        const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+        const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
+        let oauth2Credential = await this.oauth2credentialRepository.findByUserIdAndPlatform(
+            userId,
+            'twitter',
+        );
+
+
+        const dataSend = {
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'refresh_token',
+            refresh_token: oauth2Credential.refreshToken,
+        };
+
+        const response = this.httpService.post(tokenUrl, dataSend, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: `Basic ${credentials}`,
+            },
+        });
+
+        const { data }: { data: TwitterHttpInterface } = await firstValueFrom(response);
+
+        const now = new Date();
+        now.setTime(now.getTime() + data.expires_in * 1000);
+
+        await this.oauth2credentialRepository.update(oauth2Credential.id, {
+            status: 'filled',
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            scope: data.scope,
+            tokenExpiry: data.expires_in,
+            dateExpiry: now,
+        });
+
+        return data?.access_token;
     }
 
     private encrypt(text: string) {

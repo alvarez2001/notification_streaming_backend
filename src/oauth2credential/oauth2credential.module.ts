@@ -16,11 +16,7 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
     controllers: [Oauth2credentialController],
     exports: [Oauth2credentialService],
-    imports: [
-        RabbitmqModule, 
-        TypeOrmModule.forFeature([Oauth2credential]),
-        HttpModule
-    ],
+    imports: [RabbitmqModule, TypeOrmModule.forFeature([Oauth2credential]), HttpModule],
     providers: [
         {
             provide: OAUTH2CREDENTIAL_REPOSITORY_INTERFACE,

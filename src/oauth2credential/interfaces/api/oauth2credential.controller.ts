@@ -62,7 +62,7 @@ export class Oauth2credentialController {
         @Query('state') state: string,
     ): Promise<any> {
         await this.oauth2credentialService.callbackOAuth(platform, code, state);
-        const url = `${this.configService.get('REDIRECT_FRONTEND')}/oauth2`;
+        const url = `${this.configService.get('REDIRECT_FRONTEND')}/oauth2?authentication=success`;
         return { statusCode: HttpStatus.FOUND, url };
     }
 }

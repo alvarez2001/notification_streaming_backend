@@ -8,9 +8,12 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './authentication/application/guards/jwt-auth.guard';
 import { Oauth2credentialModule } from './oauth2credential/oauth2credential.module';
+import { StreamingNotificationModule } from './streamingnotification/streamingnotification.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         EventEmitterModule.forRoot(),
         RabbitmqModule,
         ConfigModule.forRoot({
@@ -34,6 +37,7 @@ import { Oauth2credentialModule } from './oauth2credential/oauth2credential.modu
         UserModule,
         AuthenticationModule,
         Oauth2credentialModule,
+        StreamingNotificationModule,
     ],
     controllers: [],
     providers: [

@@ -7,8 +7,8 @@ export class CreateOauth2credentialDto {
     @IsNotEmpty()
     public platform: string;
 
-    @ApiProperty()
-    @IsInt()
-    @IsNotEmpty()
-    public userId: number;
+    // @ApiProperty()
+    // @IsInt()
+    // @IsNotEmpty()
+    // public userId: number;
 }

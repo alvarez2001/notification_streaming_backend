@@ -8,4 +8,7 @@ export enum DeclarationQueues {
 
     'oauth2credential_created' = 'oauth2credential.created',
     'oauth2credential_updated' = 'oauth2credential.updated',
+
+    'streamingnotification_created' = 'streamingnotification.created',
+    'streamingnotification_updated' = 'streamingnotification.updated',
 }

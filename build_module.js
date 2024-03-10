@@ -43,10 +43,11 @@ function writeFile(filePath, content) {
   console.log(`Archivo creado: ${filePath}`);
 }
 
-const entityNameLowerCase = entityName.toLowerCase();
 const entityNameCamelCase =
-  entityNameLowerCase.charAt(0).toUpperCase() +
-  entityNameLowerCase.slice(1);
+entityName.charAt(0).toUpperCase() +
+entityName.slice(1);
+const entityNameLowerCase = entityName.toLowerCase();
+
 
 // Crear y escribir los archivos
 

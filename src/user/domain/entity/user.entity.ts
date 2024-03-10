@@ -1,4 +1,5 @@
 import { Oauth2credential } from 'src/oauth2credential/domain/entity/oauth2credential.entity';
+import { StreamingNotification } from 'src/streamingnotification/domain/entity/streamingnotification.entity';
 import {
     Entity,
     Column,
@@ -23,7 +24,10 @@ export class User {
     public password: string;
 
     @OneToMany(() => Oauth2credential, (oauth2Credential) => oauth2Credential.user)
-    public oauth2Credentials: Oauth2credential[]
+    public oauth2Credentials: Oauth2credential[];
+
+    @OneToMany(() => StreamingNotification, (streamingNotification) => streamingNotification.user)
+    public streamingNotification: StreamingNotification[]
 
     @CreateDateColumn({ name: 'created_at' })
     public createdAt: Date;

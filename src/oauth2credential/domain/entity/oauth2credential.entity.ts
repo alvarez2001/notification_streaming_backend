@@ -1,3 +1,4 @@
+import { StreamingNotification } from 'src/streamingnotification/domain/entity/streamingnotification.entity';
 import { User } from 'src/user/domain/entity/user.entity';
 import {
   Entity,
@@ -7,9 +8,10 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
-@Entity()
+@Entity('oauth2_credential')
 export class Oauth2credential {
   @PrimaryGeneratedColumn('increment')
   public id: number;
@@ -50,6 +52,9 @@ export class Oauth2credential {
 
   @Column({ name: 'scope', nullable: true })
   public scope: string;
+
+  @ManyToMany(() => StreamingNotification, (oauth2Credential) => oauth2Credential.platformNotifications)
+  public streamingNotification: StreamingNotification[];
   
   @CreateDateColumn({ name: 'created_at' })
   public createdAt: Date;

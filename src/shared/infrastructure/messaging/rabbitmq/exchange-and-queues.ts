@@ -16,4 +16,8 @@ export const ExchangesAndQueues: {
         DeclarationQueues.oauth2credential_created,
         DeclarationQueues.oauth2credential_updated,
     ],
+    [DeclarationExchanges.streamingnotification_exchange]: [
+        DeclarationQueues.streamingnotification_created,
+        DeclarationQueues.streamingnotification_updated,
+    ],
 };
