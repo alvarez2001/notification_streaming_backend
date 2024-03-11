@@ -17,6 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './domain/strategy/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GatewayModule } from '../gateway/gateway.module';
 
 @Module({
     controllers: [AuthenticationController],
@@ -36,6 +37,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 },
             }),
         }),
+        forwardRef(() => GatewayModule),
     ],
     providers: [
         {

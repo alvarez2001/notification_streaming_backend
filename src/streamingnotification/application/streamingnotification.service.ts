@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { Oauth2credentialService } from 'src/oauth2credential/application/oauth2credential.service';
 import { Oauth2credential } from 'src/oauth2credential/domain/entity/oauth2credential.entity';
+import { EventsGateway, TypeMessagesSocket } from 'src/gateway/events/events.gateway';
 const crypto = require('crypto');
 
 @Injectable()
@@ -28,6 +29,8 @@ export class StreamingNotificationService {
         private readonly configService: ConfigService,
         @Inject(forwardRef(() => Oauth2credentialService))
         private oauth2CredentialService: Oauth2credentialService,
+        @Inject(forwardRef(() => EventsGateway))
+        private eventsGateway: EventsGateway,
     ) {}
 
     async createStreamingNotification(
@@ -123,13 +126,11 @@ export class StreamingNotificationService {
         );
 
         response.subscribe({
-            next: () => {
-
-            },
-            error: (err) => {
+            next: () => {},
+            error: err => {
                 console.log(err);
-            }
-        })
+            },
+        });
 
         return this.streamingnotificationRepository.delete(id);
     }
@@ -236,7 +237,20 @@ export class StreamingNotificationService {
                 const subscriptionId = notification.subscription.id;
                 const modelData =
                     await this.streamingnotificationRepository.findBySubscriptionId(subscriptionId);
-                this.streamingnotificationRepository.update(modelData.id, { status: 'filled' });
+
+                const streamingNotificationData = await this.streamingnotificationRepository.update(
+                    modelData.id,
+                    { status: 'filled' },
+                );
+                const dataStreamingNotificationDto = plainToClass(StreamingNotificationResponseDto, streamingNotificationData, {
+                    excludeExtraneousValues: true,
+                });
+
+                this.eventsGateway.sendMessageUser(
+                    modelData.userId,
+                    TypeMessagesSocket.UPDATE_STREAMING_NOTIFICATION,
+                    dataStreamingNotificationDto,
+                );
             } else if (MESSAGE_TYPE_REVOCATION === request.headers[MESSAGE_TYPE]) {
                 httpResponse = 204;
 
@@ -269,6 +283,19 @@ export class StreamingNotificationService {
         const notifications = streamingNotificationByName.platformNotifications;
 
         const textNotification = streamingNotificationByName.message.replace('%title%', title);
+
+        let urlPlatform = '';
+
+        if (streamingNotificationByName.platformStreaming === 'twitch') {
+            urlPlatform = `https://twitch.tv/${streamingNotificationByName.name}`;
+        }
+
+        this.eventsGateway.sendMessageGlobal(TypeMessagesSocket.NOTIFY_LIVE_STREAM, {
+            platform: streamingNotificationByName.platformStreaming,
+            profileImageUrl: streamingNotificationByName.profileImageUrl,
+            name: streamingNotificationByName.name,
+            url: urlPlatform,
+        });
 
         for (let index = 0; index < notifications.length; index++) {
             const notification: Oauth2credential = notifications[index];

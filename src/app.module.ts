@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './authentication/application/guards/jwt-auth.guard
 import { Oauth2credentialModule } from './oauth2credential/oauth2credential.module';
 import { StreamingNotificationModule } from './streamingnotification/streamingnotification.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         AuthenticationModule,
         Oauth2credentialModule,
         StreamingNotificationModule,
+        GatewayModule,
     ],
     controllers: [],
     providers: [

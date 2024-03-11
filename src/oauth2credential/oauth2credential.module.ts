@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { RabbitmqModule } from '@shared/infrastructure/messaging/rabbitmq/rabbitmq.module';
 import { Oauth2credentialCreatedConsumer } from './application/consumers/oauth2credentialCreated.consumer';
 import { Oauth2credentialCreatedPublisher } from './application/publishers/oauth2credentialCreated.publisher';
@@ -12,11 +12,17 @@ import { Oauth2credentialSubscriber } from './application/subscriber/oauth2crede
 import { Oauth2credentialUpdatedConsumer } from './application/consumers/oauth2credentialUpdated.consumer';
 import { Oauth2credentialUpdatedPublisher } from './application/publishers/oauth2credentialUpdated.publisher';
 import { HttpModule } from '@nestjs/axios';
+import { GatewayModule } from 'src/gateway/gateway.module';
 
 @Module({
     controllers: [Oauth2credentialController],
     exports: [Oauth2credentialService],
-    imports: [RabbitmqModule, TypeOrmModule.forFeature([Oauth2credential]), HttpModule],
+    imports: [
+        RabbitmqModule,
+        TypeOrmModule.forFeature([Oauth2credential]),
+        HttpModule,
+        forwardRef(() => GatewayModule),
+    ],
     providers: [
         {
             provide: OAUTH2CREDENTIAL_REPOSITORY_INTERFACE,

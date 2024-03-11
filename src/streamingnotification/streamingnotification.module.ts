@@ -17,6 +17,7 @@ import { PROVIDER_AUTHENTICATION_REPOSITORY_INTERFACE } from './domain/interface
 import { ProviderAuthenticationRepository } from './infrastructure/repository/providerauthentication.repository';
 import { HttpModule } from '@nestjs/axios';
 import { Oauth2credentialModule } from 'src/oauth2credential/oauth2credential.module';
+import { GatewayModule } from 'src/gateway/gateway.module';
 
 @Module({
     controllers: [StreamingNotificationController],
@@ -26,6 +27,7 @@ import { Oauth2credentialModule } from 'src/oauth2credential/oauth2credential.mo
         HttpModule,
         TypeOrmModule.forFeature([StreamingNotification, ProviderAuthentication]),
         forwardRef(() => Oauth2credentialModule),
+        forwardRef(() => GatewayModule),
     ],
     providers: [
         {

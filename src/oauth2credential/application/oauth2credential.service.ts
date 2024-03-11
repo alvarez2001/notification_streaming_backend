@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import {
     OAUTH2CREDENTIAL_REPOSITORY_INTERFACE,
     Oauth2credentialRepositoryInterface,
@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { TwitterHttpInterface } from '../domain/interfaces/twitter.http.interface';
 import { firstValueFrom } from 'rxjs';
+import { EventsGateway, TypeMessagesSocket } from 'src/gateway/events/events.gateway';
 
 @Injectable()
 export class Oauth2credentialService {
@@ -24,6 +25,8 @@ export class Oauth2credentialService {
         private oauth2credentialRepository: Oauth2credentialRepositoryInterface,
         private configService: ConfigService,
         private readonly httpService: HttpService,
+        @Inject(forwardRef(() => EventsGateway))
+        private eventsGateway: EventsGateway,
     ) {}
 
     async createOauth2credential(
@@ -201,7 +204,7 @@ export class Oauth2credentialService {
                 const now = new Date();
                 now.setTime(now.getTime() + data.expires_in * 1000);
 
-                await this.oauth2credentialRepository.update(oauth2Credential.id, {
+                oauth2Credential = await this.oauth2credentialRepository.update(oauth2Credential.id, {
                     status: 'filled',
                     accessToken: data.access_token,
                     refreshToken: data.refresh_token,
@@ -209,13 +212,23 @@ export class Oauth2credentialService {
                     tokenExpiry: data.expires_in,
                     dateExpiry: now,
                 });
+
+                const dataOauthResponse = plainToClass(Oauth2credentialResponseDto, oauth2Credential, {
+                    excludeExtraneousValues: true,
+                });
+                this.eventsGateway.sendMessageUser(oauth2Credential.userId, TypeMessagesSocket.UPDATE_OAUTH2, dataOauthResponse);
             },
             error: async error => {
                 console.log(`error -> ${error}`);
 
-                await this.oauth2credentialRepository.update(oauth2Credential.id, {
+                oauth2Credential = await this.oauth2credentialRepository.update(oauth2Credential.id, {
                     status: 'refused',
                 });
+
+                const dataOauthResponse = plainToClass(Oauth2credentialResponseDto, oauth2Credential, {
+                    excludeExtraneousValues: true,
+                });
+                this.eventsGateway.sendMessageUser(oauth2Credential.userId, TypeMessagesSocket.UPDATE_OAUTH2, dataOauthResponse);
             },
         });
 

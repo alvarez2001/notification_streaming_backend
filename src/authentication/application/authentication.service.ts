@@ -12,6 +12,7 @@ import { UserService } from '../../user/application/user.service';
 import * as bcryptjs from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { EventsGateway, TypeMessagesSocket } from 'src/gateway/events/events.gateway';
 
 @Injectable()
 export class AuthenticationService {
@@ -22,6 +23,8 @@ export class AuthenticationService {
         private userService: UserService,
         private jwtService: JwtService,
         private configService: ConfigService,
+        @Inject(forwardRef(() => EventsGateway))
+        private eventsGateway: EventsGateway,
     ) {}
 
     async createAuthentication(
@@ -112,6 +115,8 @@ export class AuthenticationService {
                 authentication,
             );
         }
+
+        this.eventsGateway.sendMessageUser(user.id, TypeMessagesSocket.AUTH, { close: true, clientId: this.eventsGateway.findClientIdByUserId(user.id) });
 
         authentication = await this.authenticationRepository.findById(authentication.id);
 
